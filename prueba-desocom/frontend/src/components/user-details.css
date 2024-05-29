@@ -1,0 +1,6 @@
+.link-back-to-home {
+  color: blue;
+}
+.link-back-to-home:hover {
+  text-decoration: underline;
+}

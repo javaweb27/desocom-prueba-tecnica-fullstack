@@ -5,12 +5,34 @@ import taskModel, {
   TaskRequestModify,
 } from "../models/taskModel";
 import { isValidMongoId } from "../utils/isValidMongoId";
+import { jwtVerifier } from "../utils/jwtVerifier";
+import userModel from "../models/userModel";
 
 /**
  * get all
  */
 export const getAll = async (cli: Request, res: Response) => {
-  const tasks = await taskModel.find();
+  const jwtToken = cli.headers.authorization?.split(" ")[1];
+
+  let payload: { _id: string; iat: number };
+
+  try {
+    payload = await jwtVerifier<{ _id: string; iat: number }>(jwtToken);
+  } catch (error) {
+    res.status(401).send("el jwt token es invalido, debes iniciar sesion");
+    return;
+  }
+
+  const user = await userModel.findById(payload);
+
+  if (null === user) {
+    res
+      .status(401)
+      .send("el usuario no existe, crea una cuenta y luego inicia sesion");
+    return;
+  }
+
+  const tasks = await taskModel.find({ userId: user._id });
 
   if (0 === tasks.length) {
     res.sendStatus(404);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { User } from "./types";
 import "./users-component.css";
+import { Link } from "react-router-dom";
 
 const UsersComponent = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -35,7 +36,9 @@ const UsersComponent = () => {
               <p>{user.company.catchPhrase}</p>
               <p>{user.company.bs}</p>
             </div>
-            <button>Details</button>
+            <Link to={`/${user.id}`} className="btn-details">
+              Details
+            </Link>
           </div>
         ))}
       </div>

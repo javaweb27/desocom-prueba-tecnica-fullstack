@@ -25,13 +25,14 @@
   font-size: 1.3rem;
 }
 
-.users button {
+.users .btn-details {
+  text-align: center;
   margin-top: auto;
   border-radius: 8px;
   padding: 12px;
   background-color: rgb(14, 196, 14);
 }
-.users button:hover {
+.users .btn-details:hover {
   background-color: rgb(7, 112, 7);
 }
 

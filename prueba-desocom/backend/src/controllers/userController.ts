@@ -5,8 +5,36 @@ import userModel, {
   UserRequestLogin,
 } from "../models/userModel";
 import { jwtSigner } from "../utils/jwtSigner";
+import { jwtVerifier } from "../utils/jwtVerifier";
 
 export const getAll = async (cli: Request, res: Response) => {
+  const jwtToken = cli.headers.authorization?.split(" ")[1];
+
+  let payload: { _id: string; iat: number };
+
+  try {
+    payload = await jwtVerifier<{ _id: string; iat: number }>(jwtToken);
+  } catch (error) {
+    res.status(401).send("el jwt token es invalido, debes iniciar sesion");
+    return;
+  }
+
+  const user = await userModel.findById(payload._id);
+
+  if (null === user) {
+    res
+      .status(401)
+      .send("el usuario no existe, crea una cuenta y luego inicia sesion");
+    return;
+  }
+
+  if (true !== user.isAdmin) {
+    res
+      .status(403)
+      .send("solo los administradores pueden ver la lista de usuarios");
+    return;
+  }
+
   const users = await userModel.find();
 
   if (0 === users.length) {

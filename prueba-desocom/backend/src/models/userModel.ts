@@ -5,9 +5,12 @@ export type User = {
   name: string;
   email: string;
   password: string;
+  isAdmin: boolean;
 };
 
-export type UserRequestCreate = Omit<User, "_id">;
+export type UserRequestCreate = Omit<User, "_id"> & {
+  isAdmin: boolean;
+};
 export type UserRequestLogin = Omit<User, "_id" | "name">;
 
 const UserSchema = new Schema({
@@ -23,7 +26,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  //  todo: role? -> user \ admin, solo los admins pueden obtener la lista de todos los usuarios
+  isAdmin: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 export default model("users", UserSchema);

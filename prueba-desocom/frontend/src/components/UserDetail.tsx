@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import "./user-details.css";
 import { User } from "./types";
 import { useEffect, useState } from "react";
+import { NODE_API } from "../config";
 
 export default function UserDetail() {
   const [user, setUser] = useState<User | null | undefined>();
@@ -10,9 +11,7 @@ export default function UserDetail() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
-          "https://jsonplaceholder.typicode.com/users/" + userId
-        );
+        const response = await fetch(NODE_API + "/users/" + userId);
         const data = (await response.json()) as User;
 
         const isNotFound = Object.keys(data).length === 0;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { User } from "./types";
 import "./users-component.css";
 import { Link } from "react-router-dom";
+import { NODE_API } from "../config";
 
 const UsersComponent = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -9,9 +10,7 @@ const UsersComponent = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
-          "https://jsonplaceholder.typicode.com/users"
-        );
+        const response = await fetch(NODE_API + "/users");
         const data = (await response.json()) as User[];
         setUsers(data);
       } catch (error) {

@@ -46,12 +46,35 @@ export const getAll = async (cli: Request, res: Response) => {
  * get by id
  */
 export const getById = async (cli: Request, res: Response) => {
-  if (false == isValidMongoId(cli.params.taskId)) {
-    res.sendStatus(404);
+  const jwtToken = cli.headers.authorization?.split(" ")[1];
+
+  let payload: { _id: string; iat: number };
+
+  try {
+    payload = await jwtVerifier<{ _id: string; iat: number }>(jwtToken);
+  } catch (error) {
+    res.status(401).send("el jwt token es invalido, debes iniciar sesion");
     return;
   }
 
-  const task = await taskModel.findById(cli.params.taskId);
+  const user = await userModel.findById(payload);
+
+  if (null === user) {
+    res
+      .status(401)
+      .send("el usuario no existe, crea una cuenta y luego inicia sesion");
+    return;
+  }
+
+  if (false == isValidMongoId(cli.params.taskId)) {
+    res.status(404).send("esta tarea no existe");
+    return;
+  }
+
+  const task = await taskModel.findOne({
+    _id: cli.params.taskId,
+    userId: user._id,
+  });
 
   if (null == task) {
     res.sendStatus(404);

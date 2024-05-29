@@ -79,5 +79,7 @@ export const modifyById = async (cli: Request, res: Response) => {
   task.description = newData.description || undefined;
   task.status = newData.status;
 
+  await task.save();
+
   res.json(task);
 };

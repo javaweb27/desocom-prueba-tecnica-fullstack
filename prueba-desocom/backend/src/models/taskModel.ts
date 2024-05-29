@@ -6,7 +6,7 @@ export type Task = {
   description?: string;
   status: "pendiente" | "en progreso" | "completada";
   createdAt: number;
-  userId?: string;
+  userId: string;
 };
 
 export type TaskRequestCreate = Pick<Task, "title" | "description">;
@@ -29,7 +29,7 @@ const TaskSchema = new Schema({
     type: Number,
     required: true,
   },
-  userId: { type: Schema.Types.ObjectId, required: false },
+  userId: { type: Schema.Types.ObjectId, required: true },
 });
 
 export default model("tasks", TaskSchema);

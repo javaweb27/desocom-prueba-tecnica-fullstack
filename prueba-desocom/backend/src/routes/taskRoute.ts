@@ -10,3 +10,5 @@ taskRoute.get("/:taskId", taskController.getById);
 taskRoute.post("/", taskController.create);
 
 taskRoute.put("/:taskId", taskController.modifyById);
+
+taskRoute.delete("/:taskId", taskController.deleteById);

@@ -153,3 +153,42 @@ export const modifyById = async (cli: Request, res: Response) => {
 
   res.json(task);
 };
+
+export const deleteById = async (cli: Request, res: Response) => {
+  const jwtToken = cli.headers.authorization?.split(" ")[1];
+
+  let payload: { _id: string; iat: number };
+
+  try {
+    payload = await jwtVerifier<{ _id: string; iat: number }>(jwtToken);
+  } catch (error) {
+    res.status(401).send("el jwt token es invalido, debes iniciar sesion");
+    return;
+  }
+
+  const user = await userModel.findById(payload._id);
+
+  if (null === user) {
+    res
+      .status(401)
+      .send("el usuario no existe, crea una cuenta y luego inicia sesion");
+    return;
+  }
+
+  if (false == isValidMongoId(cli.params.taskId)) {
+    res.status(404).send("esta tarea no existe");
+    return;
+  }
+
+  const result = await taskModel.deleteOne({
+    _id: cli.params.taskId,
+    userId: user._id,
+  });
+
+  if (0 === result.deletedCount) {
+    res.status(404).send("esta tarea no existe");
+    return;
+  }
+
+  res.send("tarea eliminada");
+};

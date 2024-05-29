@@ -1,0 +1,19 @@
+header {
+  background-color: rgb(16, 186, 16);
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+}
+
+header ul {
+  display: flex;
+  align-items: center;
+}
+header a {
+  padding: 0.5rem;
+}
+header a:hover {
+  text-decoration: underline;
+}

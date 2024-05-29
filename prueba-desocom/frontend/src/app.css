@@ -1,0 +1,17 @@
+#root {
+  font-family: sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+main {
+  padding: 2rem;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}

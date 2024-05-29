@@ -1,0 +1,44 @@
+.users {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: 2rem;
+}
+
+.users-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.users .company-container {
+  margin-bottom: 1rem;
+}
+
+.users .company-container :first-child {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.users h3 {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.users button {
+  margin-top: auto;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: rgb(14, 196, 14);
+}
+.users button:hover {
+  background-color: rgb(7, 112, 7);
+}
+
+.users-card {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(220, 220, 220);
+  border-radius: 20px;
+  padding: 1rem;
+}

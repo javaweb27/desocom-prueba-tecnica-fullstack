@@ -3,6 +3,7 @@ import app from "./app";
 import { PORT } from "./config";
 import { mongodbConnection } from "./mongodbConnection";
 import { taskRoute } from "./routes/taskRoute";
+import { userRoute } from "./routes/userRoute";
 
 mongodbConnection();
 
@@ -15,3 +16,4 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/tasks", taskRoute);
+app.use("/api/users", userRoute);

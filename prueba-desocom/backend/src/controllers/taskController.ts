@@ -65,14 +65,39 @@ export const getById = async (cli: Request, res: Response) => {
  * create
  */
 export const create = async (cli: Request, res: Response) => {
+  const jwtToken = cli.headers.authorization?.split(" ")[1];
+
+  let payload: { _id: string; iat: number };
+
+  try {
+    payload = await jwtVerifier<{ _id: string; iat: number }>(jwtToken);
+  } catch (error) {
+    res.status(401).send("el jwt token es invalido, debes iniciar sesion");
+    return;
+  }
+
+  const user = await userModel.findById(payload._id);
+
+  if (null === user) {
+    res
+      .status(401)
+      .send("el usuario no existe, crea una cuenta y luego inicia sesion");
+    return;
+  }
+
   let { title, description } = cli.body as TaskRequestCreate;
 
+  if (title.trim().length < 3) {
+    res.status(400).send("el titulo debe tener 3 o mas caracteres");
+    return;
+  }
+
   const task = await taskModel.create({
-    title,
+    title: title.trim(),
     status: "pendiente",
     createdAt: Date.now(),
-    userId: undefined,
-    description: description || undefined,
+    description: description?.trim() || undefined,
+    userId: user._id.toString(),
   } satisfies Omit<Task, "_id">);
 
   res.status(201).json(task);

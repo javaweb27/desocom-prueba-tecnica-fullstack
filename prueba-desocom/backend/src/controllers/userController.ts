@@ -18,7 +18,7 @@ export const getAll = async (cli: Request, res: Response) => {
 };
 
 export const create = async (cli: Request, res: Response) => {
-  let { email, name, password } = cli.body as UserRequestCreate;
+  let { email, name, password, isAdmin } = cli.body as UserRequestCreate;
 
   if (name.trim().length < 3) {
     res.status(400).send("el nombre debe tener 3 o mas caracteres");
@@ -36,6 +36,7 @@ export const create = async (cli: Request, res: Response) => {
     name,
     email: email.toLowerCase(),
     password: await bcrypt.hash(password, 10),
+    isAdmin,
   } satisfies UserRequestCreate);
 
   res.status(201).json(user);

@@ -60,12 +60,23 @@ export const create = async (cli: Request, res: Response) => {
     return;
   }
 
-  const user = await userModel.create({
-    name: data.name,
-    email: data.email.toLowerCase(),
-    password: await bcrypt.hash(data.password, 10),
-    isAdmin: data.isAdmin,
-  } satisfies UserRequestCreate);
+  let user;
+
+  try {
+    user = await userModel.create({
+      name: data.name,
+      email: data.email.toLowerCase(),
+      password: await bcrypt.hash(data.password, 10),
+      isAdmin: data.isAdmin,
+    } satisfies UserRequestCreate);
+  } catch (error) {
+    if (error?.code === 11000) {
+      res.status(400).send("este email ya esta en uso");
+      return;
+    }
+    res.sendStatus(500);
+    return;
+  }
 
   res.status(201).json(user);
 };

@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import userModel, {
-  UserRequestCreate,
-  UserRequestLogin,
-} from "../models/userModel";
+import userModel from "../models/userModel";
 import { jwtSigner } from "../utils/jwtSigner";
 import { jwtVerifier } from "../utils/jwtVerifier";
+import {
+  UserRequestCreate,
+  userValidatorCreate,
+} from "../validators/userValidatorCreate";
+import {
+  UserRequestLogin,
+  userValidatorLogin,
+} from "../validators/userValidatorLogin";
 
 export const getAll = async (cli: Request, res: Response) => {
   const jwtToken = cli.headers.authorization?.split(" ")[1];
@@ -46,41 +51,43 @@ export const getAll = async (cli: Request, res: Response) => {
 };
 
 export const create = async (cli: Request, res: Response) => {
-  let { email, name, password, isAdmin } = cli.body as UserRequestCreate;
+  let data: UserRequestCreate;
 
-  if (name.trim().length < 3) {
-    res.status(400).send("el nombre debe tener 3 o mas caracteres");
-    return;
-  }
-
-  // todo: check valid email
-
-  if (password.length < 8) {
-    res.status(400).send("la contraseña debe tener 8 o mas caracteres");
+  try {
+    data = await userValidatorCreate(cli.body);
+  } catch (error) {
+    res.status(400).json(error);
     return;
   }
 
   const user = await userModel.create({
-    name,
-    email: email.toLowerCase(),
-    password: await bcrypt.hash(password, 10),
-    isAdmin,
+    name: data.name,
+    email: data.email.toLowerCase(),
+    password: await bcrypt.hash(data.password, 10),
+    isAdmin: data.isAdmin,
   } satisfies UserRequestCreate);
 
   res.status(201).json(user);
 };
 
 export const login = async (cli: Request, res: Response) => {
-  let { email, password } = cli.body as UserRequestLogin;
+  let data: UserRequestLogin;
 
-  const user = await userModel.findOne({ email });
+  try {
+    data = await userValidatorLogin(cli.body);
+  } catch (error) {
+    res.status(400).json(error);
+    return;
+  }
+
+  const user = await userModel.findOne({ email: data.email });
 
   if (null === user) {
     res.status(404).send("el usuario no existe");
     return;
   }
 
-  if (false === (await bcrypt.compare(password, user.password))) {
+  if (false === (await bcrypt.compare(data.password, user.password))) {
     res.status(400).send("contraseña incorrecta");
     return;
   }

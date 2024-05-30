@@ -8,11 +8,6 @@ export type User = {
   isAdmin: boolean;
 };
 
-export type UserRequestCreate = Omit<User, "_id"> & {
-  isAdmin: boolean;
-};
-export type UserRequestLogin = Omit<User, "_id" | "name">;
-
 const UserSchema = new Schema({
   name: {
     type: String,
